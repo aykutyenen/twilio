@@ -16,7 +16,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('home');
 });
-Route::get('/room/{room_name}', 'VideoController@index');
+Route::get('/token', 'VideoController@token');
+Route::get('/room2/{room_name}', 'VideoController@index');
 Route::get('/room/getAccessToken/{room_name}', 'VideoController@getAccessToken');
 Route::get('/room/complete/{room_id}', 'VideoController@complete');
 

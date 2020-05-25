@@ -1,10 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Http\Request;
 
 use Twilio\Jwt\AccessToken;
 use Twilio\Jwt\Grants\VideoGrant;
 use Twilio\Rest\Client;
+
+
 
 class VideoController extends Controller
 {
@@ -21,7 +24,7 @@ class VideoController extends Controller
         $this->token = env('TWILIO_AUTH_TOKEN');
         $this->key = env('TWILIO_API_KEY');
         $this->secret = env('TWILIO_API_SECRET');
-        $this->room_name = "P2P";
+        $this->room_name = "";
     }
     public function index($name)
     {
@@ -42,6 +45,34 @@ class VideoController extends Controller
             );
         echo($room->sid);
 
+    }
+    public function token(Request $request){
+        $sid = $this->sid;
+        $key = $this->key;
+        $secret = $this->secret;
+        // Required for Video grant
+        $roomName = $request->input('roomName');
+        // An identifier for your app - can be anything you'd like
+        $identity = $request->input('identity');
+
+        // Create access token, which we will serialize and send to the client
+        $token = new AccessToken(
+            $sid,
+            $key,
+            $secret,
+            3600,
+            $identity
+        );
+
+        // Create Video grant
+        $videoGrant = new VideoGrant();
+        $videoGrant->setRoom($roomName);
+
+        // Add grant to token
+        $token->addGrant($videoGrant);
+
+        // render token to string
+        echo $token->toJWT();
     }
     public function getAccessToken($room_name)
     {
